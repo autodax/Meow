@@ -63,7 +63,7 @@ export const CATS: CatProfile[] = [
     durationLabel: '0.58s',
     description:
       'A gentle, balanced rising-and-falling greeting with warm rounded vowels and an affectionate tail.',
-    imageUrl: '/src/assets/images/cat_scottish_fold_1795310163969.jpg',
+    imageUrl: './src/assets/images/cat_scottish_fold_1795310163969.jpg',
     imageAlt: 'Cream Scottish Fold cat with folded ears and round amber eyes sitting on a limestone pedestal',
     fallbackGradient: 'from-stone-200 via-stone-100 to-amber-50',
     voice: {
@@ -95,7 +95,7 @@ export const CATS: CatProfile[] = [
     durationLabel: '0.76s',
     description:
       'A deep, resonant chest voice opening with a rolling feline trill before settling into a relaxed low mrow.',
-    imageUrl: '/src/assets/images/cat_maine_coon_1795310166624.jpg',
+    imageUrl: './src/assets/images/cat_maine_coon_1795310166624.jpg',
     imageAlt: 'Fluffy ginger Maine Coon cat with tufted ears seated on dark oak wood',
     fallbackGradient: 'from-amber-100 via-stone-200 to-stone-100',
     voice: {
@@ -127,7 +127,7 @@ export const CATS: CatProfile[] = [
     durationLabel: '0.82s',
     description:
       'Bright, brassy, and unmistakably conversational—rich nasal harmonics with a dramatic sustained midrange.',
-    imageUrl: '/src/assets/images/cat_siamese_1795310166856.jpg',
+    imageUrl: './src/assets/images/cat_siamese_1795310166856.jpg',
     imageAlt: 'Seal Point Siamese cat with sapphire blue eyes and mouth open mid-meow',
     fallbackGradient: 'from-slate-200 via-zinc-100 to-stone-100',
     voice: {
@@ -159,7 +159,7 @@ export const CATS: CatProfile[] = [
     durationLabel: '0.35s',
     description:
       'A quick, bright high-register squeak with airy overtones and a curious upward lilt at the finish.',
-    imageUrl: '/src/assets/images/cat_calico_kitten_1795310167412.jpg',
+    imageUrl: './src/assets/images/cat_calico_kitten_1795310167412.jpg',
     imageAlt: 'Tiny fluffy calico kitten with hazel eyes resting on a natural linen pillow',
     fallbackGradient: 'from-orange-50 via-stone-100 to-stone-200',
     voice: {
@@ -191,7 +191,7 @@ export const CATS: CatProfile[] = [
     durationLabel: '0.42s',
     description:
       'An inquisitive, rapid chirrup that glides briskly upward like a greeting whenever someone enters the room.',
-    imageUrl: '/src/assets/images/cat_black_bombay_1795310165770.jpg',
+    imageUrl: './src/assets/images/cat_black_bombay_1795310165770.jpg',
     imageAlt: 'Glossy jet-black Bombay cat with golden-copper eyes against a matte charcoal studio backdrop',
     fallbackGradient: 'from-zinc-700 via-zinc-600 to-zinc-800',
     voice: {
@@ -224,7 +224,7 @@ export const CATS: CatProfile[] = [
     durationLabel: '0.66s',
     description:
       'Silky and unhurried—a soft, airy feline sigh with gentle downward phrasing and subtle breath shimmer.',
-    imageUrl: '/src/assets/images/cat_white_persian_1795310166926.jpg',
+    imageUrl: './src/assets/images/cat_white_persian_1795310166926.jpg',
     imageAlt: 'Fluffy snow-white Persian cat with emerald green eyes lounging on a dove-grey knit throw',
     fallbackGradient: 'from-slate-100 via-zinc-100 to-slate-200',
     voice: {

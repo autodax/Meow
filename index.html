@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Purrfolio — Interactive Cat Gallery & Meow Atlas</title>
+    <title>Purrfolio — Interactive Cat Gallery &amp; Meow Atlas</title>
     <meta
       name="description"
       content="An interactive cat photography gallery where clicking each portrait plays a distinct feline meow sound."
     />
-    <meta property="og:title" content="Purrfolio — Interactive Cat Gallery & Meow Atlas" />
+    <meta property="og:title" content="Purrfolio — Interactive Cat Gallery &amp; Meow Atlas" />
     <meta
       property="og:description"
       content="An interactive cat photography gallery where clicking each portrait plays a distinct feline meow sound."
@@ -21,9 +21,2341 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <style>
+      :root {
+        --bg-canvas: #fafaf9;
+        --bg-surface: #ffffff;
+        --bg-muted: #f4f4f5;
+        --border-hairline: #e4e4e7;
+        --text-primary: #18181b;
+        --text-secondary: #52525b;
+        --text-muted: #71717a;
+        --text-faint: #d4d4d8;
+        --accent: #e11d48;
+        --accent-hover: #be123c;
+        --accent-soft: #fb7185;
+        --font-serif: "Fraunces", Georgia, serif;
+        --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        font-family: var(--font-sans);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background-color: var(--bg-canvas);
+        color: var(--text-primary);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      ::selection {
+        background: rgba(225, 29, 72, 0.15);
+        color: #9f1239;
+      }
+
+      h1,
+      h2 {
+        text-wrap: balance;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font-family: inherit;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 72rem;
+        margin: 0 auto;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+      }
+
+      /* Top Bar (3-Zone Contract) */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        background: rgba(250, 250, 249, 0.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(228, 228, 231, 0.85);
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+      }
+
+      .brand {
+        font-family: var(--font-serif);
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .primary-nav {
+        display: none;
+        align-items: center;
+        gap: 1.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+
+      .primary-nav a {
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: color 150ms ease;
+      }
+
+      .primary-nav a:hover {
+        color: var(--text-primary);
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
+      @media (min-width: 640px) {
+        .primary-nav {
+          display: flex;
+        }
+      }
+
+      .chorus-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border: 0;
+        border-radius: 0.5rem;
+        background: var(--text-primary);
+        color: #ffffff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition: background-color 150ms ease, transform 150ms ease;
+      }
+
+      .chorus-btn:hover {
+        background: #27272a;
+      }
+
+      .chorus-btn.is-active {
+        background: var(--accent);
+      }
+
+      .chorus-btn.is-active:hover {
+        background: var(--accent-hover);
+      }
+
+      /* Main content */
+      .main-content {
+        padding-top: 2.5rem;
+        padding-bottom: 5rem;
+      }
+
+      @media (min-width: 640px) {
+        .main-content {
+          padding-top: 3rem;
+        }
+      }
+
+      .intro {
+        max-width: 42rem;
+      }
+
+      .intro h1 {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-size: clamp(2.25rem, 4.2vw, 3rem);
+        font-weight: 500;
+        line-height: 1.1;
+        letter-spacing: -0.025em;
+        color: var(--text-primary);
+      }
+
+      .intro p {
+        margin: 0.75rem 0 0;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+      }
+
+      /* Filter & Audio Toolbar */
+      .toolbar {
+        margin-top: 2rem;
+        padding: 1rem 0;
+        border-top: 1px solid var(--border-hairline);
+        border-bottom: 1px solid var(--border-hairline);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      @media (min-width: 768px) {
+        .toolbar {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+
+      .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem;
+        background: rgba(228, 228, 231, 0.65);
+        border-radius: 0.5rem;
+        width: fit-content;
+        max-width: 100%;
+        overflow-x: auto;
+      }
+
+      .filter-btn {
+        border: 0;
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.375rem 0.875rem;
+        border-radius: 0.375rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+      }
+
+      .filter-btn:hover {
+        color: var(--text-primary);
+      }
+
+      .filter-btn.is-active {
+        background: #ffffff;
+        color: var(--text-primary);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      }
+
+      .audio-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1.25rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      .volume-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+      }
+
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border: 0;
+        border-radius: 0.5rem;
+        background: transparent;
+        color: #3f3f46;
+        cursor: pointer;
+        transition: background-color 150ms ease, color 150ms ease;
+      }
+
+      .icon-btn:hover {
+        background: rgba(228, 228, 231, 0.7);
+        color: var(--text-primary);
+      }
+
+      .icon-btn.is-muted {
+        color: var(--accent);
+      }
+
+      .volume-slider {
+        width: 6rem;
+        accent-color: var(--text-primary);
+        cursor: pointer;
+      }
+
+      .divider-pipe {
+        display: none;
+        color: var(--text-faint);
+      }
+
+      @media (min-width: 640px) {
+        .divider-pipe {
+          display: inline;
+        }
+      }
+
+      .session-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+        color: var(--text-secondary);
+      }
+
+      .sep-dot {
+        color: var(--text-faint);
+      }
+
+      /* Gallery Grid */
+      .cat-grid {
+        margin-top: 2.25rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        column-gap: 2rem;
+        row-gap: 2.5rem;
+      }
+
+      @media (min-width: 640px) {
+        .cat-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .cat-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .cat-card {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .cat-media-wrap {
+        position: relative;
+      }
+
+      .cat-portrait-btn {
+        position: relative;
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        padding: 0;
+        border: 1px solid rgba(228, 228, 231, 0.85);
+        border-radius: 1rem;
+        overflow: hidden;
+        background: var(--bg-muted);
+        text-align: left;
+        cursor: pointer;
+        transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease;
+      }
+
+      .cat-portrait-btn:active {
+        transform: scale(0.985);
+      }
+
+      .cat-card.is-playing .cat-portrait-btn {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px var(--bg-canvas), 0 0 0 4px var(--accent);
+      }
+
+      .cat-portrait-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .cat-card:hover .cat-portrait-img {
+        transform: scale(1.025);
+      }
+
+      .cat-card.is-playing .cat-portrait-img {
+        transform: scale(1.035);
+      }
+
+      .cat-fallback {
+        display: none;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 1.5rem;
+        color: #3f3f46;
+      }
+
+      .cat-fallback.is-visible {
+        display: flex;
+      }
+
+      .cat-fallback-name {
+        font-family: var(--font-serif);
+        font-size: 1.125rem;
+        font-weight: 500;
+      }
+
+      .portrait-scrim {
+        pointer-events: none;
+        position: absolute;
+        inset: auto 0 0 0;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 3rem 1rem 0.875rem;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.82) 0%,
+          rgba(0, 0, 0, 0.42) 55%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        color: #ffffff;
+        opacity: 0;
+        transition: opacity 180ms ease;
+      }
+
+      .cat-card:hover .portrait-scrim,
+      .cat-portrait-btn:focus-visible .portrait-scrim,
+      .cat-card.is-playing .portrait-scrim {
+        opacity: 1;
+      }
+
+      .scrim-left {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+      }
+
+      .scrim-hint {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.95);
+      }
+
+      .scrim-callout {
+        font-family: var(--font-serif);
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        color: #ffffff;
+      }
+
+      .scrim-duration {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-variant-numeric: tabular-nums;
+        color: rgba(255, 255, 255, 0.82);
+      }
+
+      .inspect-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 0;
+        border-radius: 0.75rem;
+        background: rgba(0, 0, 0, 0.52);
+        color: #ffffff;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        opacity: 0;
+        cursor: pointer;
+        transition: opacity 150ms ease, background-color 150ms ease;
+      }
+
+      .cat-card:hover .inspect-btn,
+      .inspect-btn:focus-visible {
+        opacity: 1;
+      }
+
+      .inspect-btn:hover {
+        background: rgba(0, 0, 0, 0.76);
+      }
+
+      @media (hover: none) {
+        .inspect-btn {
+          opacity: 0.9;
+        }
+      }
+
+      /* Soundwave bars */
+      .sound-bars {
+        display: inline-flex;
+        align-items: flex-end;
+        height: 1rem;
+        gap: 3px;
+      }
+
+      .sound-bar {
+        display: block;
+        width: 3px;
+        height: 100%;
+        border-radius: 9999px;
+        background: var(--accent-soft);
+        transform-origin: bottom;
+        animation: soundBarPulse 380ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+      }
+
+      @keyframes soundBarPulse {
+        0%,
+        100% {
+          transform: scaleY(0.28);
+        }
+        50% {
+          transform: scaleY(1);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .sound-bar {
+          animation: none;
+          transform: scaleY(0.7);
+        }
+      }
+
+      /* Unboxed editorial card metadata */
+      .cat-meta {
+        margin-top: 0.875rem;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .cat-meta-left {
+        min-width: 0;
+      }
+
+      .cat-title-row {
+        display: flex;
+        align-items: baseline;
+        gap: 0.625rem;
+      }
+
+      .cat-name {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-size: 1.25rem;
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        color: var(--text-primary);
+      }
+
+      .playing-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--accent);
+        display: none;
+      }
+
+      .cat-card.is-playing .playing-label {
+        display: inline;
+      }
+
+      .cat-subline {
+        margin: 0.25rem 0 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.125rem 0.5rem;
+        font-size: 0.8125rem;
+        color: var(--text-secondary);
+      }
+
+      .cat-meta-right {
+        flex-shrink: 0;
+        text-align: right;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-variant-numeric: tabular-nums;
+        color: var(--text-muted);
+      }
+
+      .cat-count {
+        margin-left: 0.5rem;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      /* Vocal Guide Section */
+      .vocal-guide {
+        margin-top: 5rem;
+        padding-top: 3.5rem;
+        border-top: 1px solid var(--border-hairline);
+      }
+
+      .section-heading {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+      }
+
+      .section-sub {
+        margin: 0.375rem 0 0;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
+      .guide-list {
+        margin-top: 2rem;
+        border-top: 1px solid var(--border-hairline);
+        border-bottom: 1px solid var(--border-hairline);
+      }
+
+      .guide-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-hairline);
+      }
+
+      .guide-row:last-child {
+        border-bottom: 0;
+      }
+
+      @media (min-width: 640px) {
+        .guide-row {
+          grid-template-columns: 3fr 5fr 2fr 2fr;
+          gap: 1rem;
+        }
+      }
+
+      .guide-name {
+        font-family: var(--font-serif);
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      .guide-breed {
+        margin-left: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      .guide-desc {
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--text-secondary);
+      }
+
+      .guide-pitch {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-variant-numeric: tabular-nums;
+        color: var(--text-muted);
+      }
+
+      @media (min-width: 640px) {
+        .guide-pitch,
+        .guide-action {
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+
+      .guide-play-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 0.875rem;
+        border: 1px solid var(--border-hairline);
+        border-radius: 0.5rem;
+        background: var(--bg-surface);
+        color: #27272a;
+        font-size: 0.75rem;
+        font-weight: 500;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+      }
+
+      .guide-play-btn:hover {
+        border-color: #a1a1aa;
+        color: #09090b;
+      }
+
+      .guide-play-btn.is-playing {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #ffffff;
+      }
+
+      /* Footer */
+      .site-footer {
+        border-top: 1px solid var(--border-hairline);
+        background: var(--bg-canvas);
+      }
+
+      .footer-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      @media (min-width: 640px) {
+        .footer-inner {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+
+      .footer-shortcuts {
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.25rem 0.5rem;
+      }
+
+      .footer-shortcuts strong {
+        font-weight: 500;
+        color: #3f3f46;
+      }
+
+      .reset-btn {
+        width: fit-content;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #3f3f46;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .reset-btn:hover {
+        color: #09090b;
+      }
+
+      .reset-btn[hidden] {
+        display: none;
+      }
+
+      /* Lightbox Modal */
+      .lightbox-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: rgba(9, 9, 11, 0.85);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+      }
+
+      .lightbox-backdrop[hidden] {
+        display: none;
+      }
+
+      @media (min-width: 640px) {
+        .lightbox-backdrop {
+          padding: 2rem;
+        }
+      }
+
+      .lightbox-panel {
+        position: relative;
+        width: 100%;
+        max-width: 64rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        overflow: hidden;
+        border-radius: 1rem;
+        background: var(--bg-canvas);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+      }
+
+      @media (min-width: 1024px) {
+        .lightbox-panel {
+          grid-template-columns: 7fr 5fr;
+        }
+      }
+
+      .lightbox-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 0;
+        border-radius: 0.75rem;
+        background: var(--text-primary);
+        color: #ffffff;
+        cursor: pointer;
+        transition: background-color 150ms ease;
+      }
+
+      .lightbox-close:hover {
+        background: #3f3f46;
+      }
+
+      .lightbox-media {
+        position: relative;
+        background: var(--bg-muted);
+      }
+
+      .lightbox-img-btn {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 4 / 3;
+        padding: 0;
+        border: 0;
+        overflow: hidden;
+        background: var(--bg-muted);
+        text-align: left;
+        cursor: pointer;
+      }
+
+      @media (min-width: 1024px) {
+        .lightbox-img-btn {
+          aspect-ratio: auto;
+          min-height: 26rem;
+        }
+      }
+
+      .lightbox-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .lightbox-img-btn:hover .lightbox-img {
+        transform: scale(1.015);
+      }
+
+      .lightbox-panel.is-playing .lightbox-img {
+        transform: scale(1.03);
+      }
+
+      .lightbox-scrim {
+        pointer-events: none;
+        position: absolute;
+        inset: auto 0 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 3.5rem 1.5rem 1.25rem;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.82) 0%,
+          rgba(0, 0, 0, 0.35) 55%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        color: #ffffff;
+      }
+
+      .lightbox-scrim-text {
+        font-family: var(--font-serif);
+        font-size: 1.125rem;
+        font-weight: 500;
+      }
+
+      .lightbox-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 1.5rem;
+      }
+
+      @media (min-width: 640px) {
+        .lightbox-info {
+          padding: 2rem;
+        }
+      }
+
+      .lightbox-kicker {
+        margin: 0;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+
+      .lightbox-title {
+        margin: 0.5rem 0 0;
+        font-family: var(--font-serif);
+        font-size: 1.875rem;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+      }
+
+      .lightbox-desc {
+        margin: 0.75rem 0 0;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+      }
+
+      .spec-list {
+        margin: 1.5rem 0 0;
+        border-top: 1px solid var(--border-hairline);
+        border-bottom: 1px solid var(--border-hairline);
+        font-size: 0.875rem;
+      }
+
+      .spec-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-hairline);
+      }
+
+      .spec-row:last-child {
+        border-bottom: 0;
+      }
+
+      .spec-row dt {
+        color: var(--text-muted);
+      }
+
+      .spec-row dd {
+        margin: 0;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      .spec-mono {
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+        font-weight: 400 !important;
+      }
+
+      .pitch-control {
+        margin-top: 1.5rem;
+      }
+
+      .pitch-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      .pitch-header label {
+        font-weight: 500;
+        color: #27272a;
+      }
+
+      .pitch-val {
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .pitch-slider {
+        margin-top: 0.5rem;
+        width: 100%;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+
+      .lightbox-actions {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .lightbox-play-btn {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border: 0;
+        border-radius: 0.75rem;
+        background: var(--accent);
+        color: #ffffff;
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background-color 150ms ease, transform 150ms ease;
+      }
+
+      .lightbox-play-btn:hover {
+        background: var(--accent-hover);
+      }
+
+      .lightbox-play-btn:active {
+        transform: scale(0.99);
+      }
+
+      .lightbox-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--border-hairline);
+      }
+
+      .lightbox-nav-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 0.25rem;
+        border: 0;
+        background: transparent;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .lightbox-nav-btn:hover {
+        color: var(--text-primary);
+      }
+    </style>
   </head>
-  <body class="bg-[#FAFAF9] text-[#18181B] antialiased selection:bg-[#E11D48]/15 selection:text-[#9F1239]">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="#gallery" class="brand">Purrfolio</a>
+
+        <nav class="primary-nav" aria-label="Primary">
+          <a href="#gallery">Gallery</a>
+          <a href="#vocal-guide">Vocal Guide</a>
+          <a href="#shortcuts">Shortcuts</a>
+        </nav>
+
+        <button type="button" id="chorus-btn" class="chorus-btn">
+          <span id="chorus-icon" aria-hidden="true"></span>
+          <span id="chorus-label">Play Chorus</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="container main-content">
+      <section id="gallery" aria-labelledby="gallery-heading">
+        <div class="intro">
+          <h1 id="gallery-heading">Click any cat to hear their meow.</h1>
+          <p>
+            Six studio portraits, each paired with its own synthesized feline voice—from a
+            baritone Maine Coon trill to a tiny calico squeak.
+          </p>
+        </div>
+
+        <div class="toolbar">
+          <div
+            id="filter-group"
+            class="filter-group"
+            role="group"
+            aria-label="Filter cats by vocal register"
+          ></div>
+
+          <div class="audio-controls">
+            <div class="volume-wrap">
+              <button
+                type="button"
+                id="mute-btn"
+                class="icon-btn"
+                aria-label="Mute sound"
+              ></button>
+              <label for="master-volume" class="sr-only">Master volume</label>
+              <input
+                id="master-volume"
+                class="volume-slider"
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value="0.8"
+              />
+            </div>
+
+            <span aria-hidden="true" class="divider-pipe">|</span>
+
+            <div class="session-meta">
+              <span id="cat-count-label">6 cats</span>
+              <span aria-hidden="true" class="sep-dot">·</span>
+              <span id="meow-count-label">0 meows played</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="cat-grid" class="cat-grid"></div>
+      </section>
+
+      <section id="vocal-guide" class="vocal-guide">
+        <h2 class="section-heading">Vocal Guide</h2>
+        <p class="section-sub">
+          Each portrait triggers a custom formant-shaped vocal contour tuned to the cat’s breed and character.
+        </p>
+        <div id="guide-list" class="guide-list"></div>
+      </section>
+    </main>
+
+    <footer id="shortcuts" class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-shortcuts">
+          <strong>Keyboard shortcuts:</strong>
+          <span>Press 1–6 to trigger individual cats</span>
+          <span aria-hidden="true" class="sep-dot">·</span>
+          <span>Press Space to play the chorus</span>
+        </p>
+        <button type="button" id="reset-count-btn" class="reset-btn" hidden>
+          Reset meow count
+        </button>
+      </div>
+    </footer>
+
+    <!-- Fullscreen Editorial Lightbox -->
+    <div
+      id="lightbox"
+      class="lightbox-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lightbox-title"
+      hidden
+    >
+      <div id="lightbox-panel" class="lightbox-panel">
+        <button
+          type="button"
+          id="lightbox-close"
+          class="lightbox-close"
+          aria-label="Close portrait viewer"
+        ></button>
+
+        <div class="lightbox-media">
+          <button type="button" id="lightbox-img-btn" class="lightbox-img-btn">
+            <img id="lightbox-img" class="lightbox-img" alt="" referrerpolicy="no-referrer" />
+            <div id="lightbox-fallback" class="cat-fallback"></div>
+            <div class="lightbox-scrim">
+              <span id="lightbox-scrim-text" class="lightbox-scrim-text">
+                Click portrait to hear meow
+              </span>
+              <span id="lightbox-bars" class="sound-bars" aria-hidden="true" hidden>
+                <span class="sound-bar" style="animation-delay: 0ms"></span>
+                <span class="sound-bar" style="animation-delay: 100ms"></span>
+                <span class="sound-bar" style="animation-delay: 200ms"></span>
+              </span>
+            </div>
+          </button>
+        </div>
+
+        <div class="lightbox-info">
+          <div>
+            <p id="lightbox-kicker" class="lightbox-kicker"></p>
+            <h2 id="lightbox-title" class="lightbox-title"></h2>
+            <p id="lightbox-desc" class="lightbox-desc"></p>
+
+            <dl class="spec-list">
+              <div class="spec-row">
+                <dt>Vocal Style</dt>
+                <dd id="lightbox-style"></dd>
+              </div>
+              <div class="spec-row">
+                <dt>Pitch Range</dt>
+                <dd id="lightbox-pitch" class="spec-mono"></dd>
+              </div>
+              <div class="spec-row">
+                <dt>Duration</dt>
+                <dd id="lightbox-duration" class="spec-mono"></dd>
+              </div>
+            </dl>
+
+            <div class="pitch-control">
+              <div class="pitch-header">
+                <label for="lightbox-pitch-slider">Voice Pitch</label>
+                <span id="lightbox-pitch-val" class="pitch-val">Natural (1.00×)</span>
+              </div>
+              <input
+                id="lightbox-pitch-slider"
+                class="pitch-slider"
+                type="range"
+                min="0.8"
+                max="1.25"
+                step="0.05"
+                value="1"
+              />
+            </div>
+          </div>
+
+          <div class="lightbox-actions">
+            <button type="button" id="lightbox-play-btn" class="lightbox-play-btn"></button>
+            <div class="lightbox-nav">
+              <button type="button" id="lightbox-prev" class="lightbox-nav-btn"></button>
+              <button type="button" id="lightbox-next" class="lightbox-nav-btn"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        'use strict';
+
+        // Crisp inline SVG icon helpers (zero external icon library dependency)
+        const ICONS = {
+          volume:
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>',
+          volumeX:
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="22" y1="9" x2="16" y2="15"></line><line x1="16" y1="9" x2="22" y2="15"></line></svg>',
+          play:
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>',
+          square:
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>',
+          maximize:
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>',
+          close:
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
+          chevronLeft:
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+          chevronRight:
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>',
+          cat:
+            '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z"></path><path d="M8 14v.5"></path><path d="M16 14v.5"></path><path d="M11.25 16.25h1.5L12 17l-.75-.75Z"></path></svg>',
+        };
+
+        // Cat catalog — strictly relative image paths for GitHub Pages subfolder hosting (/Meow/)
+        const CATS = [
+          {
+            id: 'mochi',
+            shortcut: '1',
+            name: 'Mochi',
+            breed: 'Cream Scottish Fold',
+            category: 'melodic',
+            vocalStyle: 'Soft classic meow',
+            callout: 'Mee-ow!',
+            pitchLabel: '480–720 Hz',
+            durationLabel: '0.58s',
+            description:
+              'A gentle, balanced rising-and-falling greeting with warm rounded vowels and an affectionate tail.',
+            imageUrl: './src/assets/images/cat_scottish_fold_1795310163969.jpg',
+            imageAlt:
+              'Cream Scottish Fold cat with folded ears and round amber eyes sitting on a limestone pedestal',
+            fallbackBg: 'linear-gradient(135deg, #e7e5e4, #f5f5f4, #fffbeb)',
+            voice: {
+              startHz: 470,
+              peakHz: 710,
+              endHz: 410,
+              duration: 0.58,
+              peakTimeRatio: 0.36,
+              f1: [420, 860, 440],
+              f2: [1450, 2150, 960],
+              f3: 2850,
+              nasality: 0.22,
+              breathiness: 0.035,
+              trillHz: 0,
+              trillDepth: 0,
+              vibratoHz: 6.2,
+              vibratoDepth: 9,
+            },
+          },
+          {
+            id: 'barnaby',
+            shortcut: '2',
+            name: 'Barnaby',
+            breed: 'Ginger Maine Coon',
+            category: 'deep',
+            vocalStyle: 'Baritone trill-mrow',
+            callout: 'Mrrr-oww',
+            pitchLabel: '240–390 Hz',
+            durationLabel: '0.76s',
+            description:
+              'A deep, resonant chest voice opening with a rolling feline trill before settling into a relaxed low mrow.',
+            imageUrl: './src/assets/images/cat_maine_coon_1795310166624.jpg',
+            imageAlt: 'Fluffy ginger Maine Coon cat with tufted ears seated on dark oak wood',
+            fallbackBg: 'linear-gradient(135deg, #fef3c7, #e7e5e4, #f5f5f4)',
+            voice: {
+              startHz: 245,
+              peakHz: 390,
+              endHz: 215,
+              duration: 0.76,
+              peakTimeRatio: 0.42,
+              f1: [320, 680, 350],
+              f2: [980, 1520, 760],
+              f3: 2450,
+              nasality: 0.16,
+              breathiness: 0.025,
+              trillHz: 26,
+              trillDepth: 22,
+              vibratoHz: 5.2,
+              vibratoDepth: 7,
+            },
+          },
+          {
+            id: 'cleo',
+            shortcut: '3',
+            name: 'Cleo',
+            breed: 'Seal Point Siamese',
+            category: 'melodic',
+            vocalStyle: 'Expressive yowl',
+            callout: 'Maaa-ow!',
+            pitchLabel: '430–675 Hz',
+            durationLabel: '0.82s',
+            description:
+              'Bright, brassy, and unmistakably conversational—rich nasal harmonics with a dramatic sustained midrange.',
+            imageUrl: './src/assets/images/cat_siamese_1795310166856.jpg',
+            imageAlt: 'Seal Point Siamese cat with sapphire blue eyes and mouth open mid-meow',
+            fallbackBg: 'linear-gradient(135deg, #e2e8f0, #f4f4f5, #f5f5f4)',
+            voice: {
+              startHz: 430,
+              peakHz: 675,
+              endHz: 350,
+              duration: 0.82,
+              peakTimeRatio: 0.34,
+              f1: [520, 1020, 480],
+              f2: [1650, 2380, 1080],
+              f3: 3150,
+              nasality: 0.48,
+              breathiness: 0.028,
+              trillHz: 0,
+              trillDepth: 0,
+              vibratoHz: 6.8,
+              vibratoDepth: 15,
+            },
+          },
+          {
+            id: 'pip',
+            shortcut: '4',
+            name: 'Pip',
+            breed: 'Calico Kitten',
+            category: 'high',
+            vocalStyle: 'Tiny kitten mew',
+            callout: 'Mew!',
+            pitchLabel: '790–1180 Hz',
+            durationLabel: '0.35s',
+            description:
+              'A quick, bright high-register squeak with airy overtones and a curious upward lilt at the finish.',
+            imageUrl: './src/assets/images/cat_calico_kitten_1795310167412.jpg',
+            imageAlt: 'Tiny fluffy calico kitten with hazel eyes resting on a natural linen pillow',
+            fallbackBg: 'linear-gradient(135deg, #fff7ed, #f5f5f4, #e7e5e4)',
+            voice: {
+              startHz: 790,
+              peakHz: 1180,
+              endHz: 860,
+              duration: 0.35,
+              peakTimeRatio: 0.45,
+              f1: [620, 1080, 680],
+              f2: [1950, 2750, 1650],
+              f3: 3550,
+              nasality: 0.25,
+              breathiness: 0.055,
+              trillHz: 0,
+              trillDepth: 0,
+              vibratoHz: 7.8,
+              vibratoDepth: 12,
+            },
+          },
+          {
+            id: 'soot',
+            shortcut: '5',
+            name: 'Soot',
+            breed: 'Black Bombay',
+            category: 'chirp',
+            vocalStyle: 'Playful upward chirp',
+            callout: 'Mrrp?!',
+            pitchLabel: '410–820 Hz',
+            durationLabel: '0.42s',
+            description:
+              'An inquisitive, rapid chirrup that glides briskly upward like a greeting whenever someone enters the room.',
+            imageUrl: './src/assets/images/cat_black_bombay_1795310165770.jpg',
+            imageAlt:
+              'Glossy jet-black Bombay cat with golden-copper eyes against a matte charcoal studio backdrop',
+            fallbackBg: 'linear-gradient(135deg, #3f3f46, #52525b, #27272a)',
+            fallbackDark: true,
+            voice: {
+              startHz: 410,
+              peakHz: 820,
+              endHz: 760,
+              duration: 0.42,
+              peakTimeRatio: 0.72,
+              f1: [380, 760, 620],
+              f2: [1150, 2100, 1850],
+              f3: 2950,
+              nasality: 0.28,
+              breathiness: 0.03,
+              trillHz: 30,
+              trillDepth: 34,
+              vibratoHz: 6.5,
+              vibratoDepth: 8,
+              doubleSyllable: true,
+            },
+          },
+          {
+            id: 'duchess',
+            shortcut: '6',
+            name: 'Duchess',
+            breed: 'White Persian',
+            category: 'high',
+            vocalStyle: 'Delicate breathy sigh',
+            callout: 'Meee-ow...',
+            pitchLabel: '530–680 Hz',
+            durationLabel: '0.66s',
+            description:
+              'Silky and unhurried—a soft, airy feline sigh with gentle downward phrasing and subtle breath shimmer.',
+            imageUrl: './src/assets/images/cat_white_persian_1795310166926.jpg',
+            imageAlt:
+              'Fluffy snow-white Persian cat with emerald green eyes lounging on a dove-grey knit throw',
+            fallbackBg: 'linear-gradient(135deg, #f1f5f9, #f4f4f5, #e2e8f0)',
+            voice: {
+              startHz: 540,
+              peakHz: 680,
+              endHz: 390,
+              duration: 0.66,
+              peakTimeRatio: 0.28,
+              f1: [460, 780, 410],
+              f2: [1550, 2280, 1020],
+              f3: 3050,
+              nasality: 0.18,
+              breathiness: 0.075,
+              trillHz: 0,
+              trillDepth: 0,
+              vibratoHz: 5.5,
+              vibratoDepth: 10,
+            },
+          },
+        ];
+
+        const FILTERS = [
+          { id: 'all', label: 'All Cats' },
+          { id: 'melodic', label: 'Melodic' },
+          { id: 'deep', label: 'Deep' },
+          { id: 'high', label: 'High' },
+          { id: 'chirp', label: 'Chirp' },
+        ];
+
+        // Web Audio API formant-filtered feline meow synthesizer
+        class MeowSynthesizer {
+          constructor() {
+            this.ctx = null;
+            this.masterGain = null;
+            this.compressor = null;
+            this.noiseBuffer = null;
+            this.volume = 0.8;
+            this.muted = false;
+          }
+
+          ensureContext() {
+            if (!this.ctx) {
+              const AudioCtx = window.AudioContext || window.webkitAudioContext;
+              if (!AudioCtx) return null;
+
+              this.ctx = new AudioCtx();
+              this.compressor = this.ctx.createDynamicsCompressor();
+              this.compressor.threshold.setValueAtTime(-16, this.ctx.currentTime);
+              this.compressor.knee.setValueAtTime(18, this.ctx.currentTime);
+              this.compressor.ratio.setValueAtTime(4, this.ctx.currentTime);
+              this.compressor.attack.setValueAtTime(0.004, this.ctx.currentTime);
+              this.compressor.release.setValueAtTime(0.15, this.ctx.currentTime);
+
+              this.masterGain = this.ctx.createGain();
+              this.masterGain.gain.setValueAtTime(
+                this.muted ? 0 : this.volume,
+                this.ctx.currentTime
+              );
+
+              this.compressor.connect(this.masterGain);
+              this.masterGain.connect(this.ctx.destination);
+              this.noiseBuffer = this.createNoiseBuffer(this.ctx);
+            }
+
+            if (this.ctx.state === 'suspended') {
+              this.ctx.resume().catch(function () {});
+            }
+
+            return this.ctx;
+          }
+
+          createNoiseBuffer(ctx) {
+            const length = Math.floor(ctx.sampleRate * 1.5);
+            const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < length; i++) {
+              data[i] = Math.random() * 2 - 1;
+            }
+            return buffer;
+          }
+
+          setVolume(val) {
+            this.volume = Math.max(0, Math.min(1, val));
+            if (this.ctx && this.masterGain) {
+              this.masterGain.gain.setTargetAtTime(
+                this.muted ? 0 : this.volume,
+                this.ctx.currentTime,
+                0.02
+              );
+            }
+          }
+
+          setMuted(isMuted) {
+            this.muted = isMuted;
+            if (this.ctx && this.masterGain) {
+              this.masterGain.gain.setTargetAtTime(
+                this.muted ? 0 : this.volume,
+                this.ctx.currentTime,
+                0.02
+              );
+            }
+          }
+
+          play(voice, pitchScale) {
+            const scale = typeof pitchScale === 'number' ? pitchScale : 1;
+            const ctx = this.ensureContext();
+            if (!ctx || !this.compressor) {
+              return Math.round(voice.duration * 1000);
+            }
+
+            const pitchJitter = (0.96 + Math.random() * 0.08) * scale;
+            const durationJitter = 0.94 + Math.random() * 0.12;
+            const dur = voice.duration * durationJitter;
+            const now = ctx.currentTime + 0.01;
+
+            if (voice.doubleSyllable) {
+              this.renderSyllable(
+                ctx,
+                Object.assign({}, voice, {
+                  startHz: voice.startHz * 0.85,
+                  peakHz: voice.startHz * 1.15,
+                  endHz: voice.startHz * 1.05,
+                  duration: 0.11,
+                  peakTimeRatio: 0.65,
+                }),
+                now,
+                pitchJitter,
+                0.55
+              );
+              this.renderSyllable(
+                ctx,
+                Object.assign({}, voice, { duration: dur }),
+                now + 0.1,
+                pitchJitter,
+                1.0
+              );
+              return Math.round((dur + 0.12) * 1000);
+            }
+
+            this.renderSyllable(
+              ctx,
+              Object.assign({}, voice, { duration: dur }),
+              now,
+              pitchJitter,
+              1.0
+            );
+            return Math.round((dur + 0.06) * 1000);
+          }
+
+          renderSyllable(ctx, voice, startTime, pitchScale, level) {
+            const dur = voice.duration;
+            const endTime = startTime + dur;
+            const peakTime = startTime + dur * voice.peakTimeRatio;
+            const holdTime = startTime + dur * Math.min(voice.peakTimeRatio + 0.18, 0.82);
+
+            const startHz = voice.startHz * pitchScale;
+            const peakHz = voice.peakHz * pitchScale;
+            const endHz = voice.endHz * pitchScale;
+
+            const oscMain = ctx.createOscillator();
+            oscMain.type = 'sawtooth';
+
+            const oscDetune = ctx.createOscillator();
+            oscDetune.type = 'sawtooth';
+            oscDetune.detune.setValueAtTime(5, startTime);
+
+            const oscSub = ctx.createOscillator();
+            oscSub.type = 'triangle';
+
+            [oscMain, oscDetune].forEach(function (osc) {
+              osc.frequency.setValueAtTime(startHz, startTime);
+              osc.frequency.exponentialRampToValueAtTime(Math.max(80, peakHz), peakTime);
+              osc.frequency.linearRampToValueAtTime(Math.max(80, peakHz * 0.96), holdTime);
+              osc.frequency.exponentialRampToValueAtTime(Math.max(80, endHz), endTime);
+            });
+
+            oscSub.frequency.setValueAtTime(startHz * 0.5, startTime);
+            oscSub.frequency.exponentialRampToValueAtTime(Math.max(60, peakHz * 0.5), peakTime);
+            oscSub.frequency.exponentialRampToValueAtTime(Math.max(60, endHz * 0.5), endTime);
+
+            const vibOsc = ctx.createOscillator();
+            const vibGain = ctx.createGain();
+            vibOsc.type = 'sine';
+            vibOsc.frequency.setValueAtTime(voice.vibratoHz, startTime);
+            vibGain.gain.setValueAtTime(voice.vibratoDepth * 0.3, startTime);
+            vibGain.gain.linearRampToValueAtTime(voice.vibratoDepth, peakTime);
+            vibGain.gain.linearRampToValueAtTime(voice.vibratoDepth * 0.5, endTime);
+            vibOsc.connect(vibGain);
+            vibGain.connect(oscMain.frequency);
+            vibGain.connect(oscDetune.frequency);
+
+            if (voice.trillHz > 0 && voice.trillDepth > 0) {
+              const trillOsc = ctx.createOscillator();
+              const trillGain = ctx.createGain();
+              trillOsc.type = 'sine';
+              trillOsc.frequency.setValueAtTime(voice.trillHz, startTime);
+              trillGain.gain.setValueAtTime(voice.trillDepth, startTime);
+              trillGain.gain.exponentialRampToValueAtTime(1.5, startTime + dur * 0.65);
+              trillOsc.connect(trillGain);
+              trillGain.connect(oscMain.frequency);
+              trillGain.connect(oscDetune.frequency);
+              trillOsc.start(startTime);
+              trillOsc.stop(endTime + 0.05);
+            }
+
+            const glottalMix = ctx.createGain();
+            const mainGain = ctx.createGain();
+            const detuneGain = ctx.createGain();
+            const subGain = ctx.createGain();
+
+            mainGain.gain.setValueAtTime(0.55, startTime);
+            detuneGain.gain.setValueAtTime(0.32, startTime);
+            subGain.gain.setValueAtTime(0.18, startTime);
+
+            oscMain.connect(mainGain);
+            oscDetune.connect(detuneGain);
+            oscSub.connect(subGain);
+            mainGain.connect(glottalMix);
+            detuneGain.connect(glottalMix);
+            subGain.connect(glottalMix);
+
+            const mouthFilter = ctx.createBiquadFilter();
+            mouthFilter.type = 'lowpass';
+            mouthFilter.frequency.setValueAtTime(900, startTime);
+            mouthFilter.frequency.exponentialRampToValueAtTime(
+              3600,
+              startTime + Math.min(0.08, dur * 0.2)
+            );
+            mouthFilter.frequency.exponentialRampToValueAtTime(1500, endTime);
+            glottalMix.connect(mouthFilter);
+
+            const formantSum = ctx.createGain();
+
+            const f1 = ctx.createBiquadFilter();
+            f1.type = 'bandpass';
+            f1.Q.setValueAtTime(4.8, startTime);
+            f1.frequency.setValueAtTime(voice.f1[0], startTime);
+            f1.frequency.exponentialRampToValueAtTime(voice.f1[1], peakTime);
+            f1.frequency.exponentialRampToValueAtTime(voice.f1[2], endTime);
+            const f1Gain = ctx.createGain();
+            f1Gain.gain.setValueAtTime(1.45, startTime);
+
+            const f2 = ctx.createBiquadFilter();
+            f2.type = 'bandpass';
+            f2.Q.setValueAtTime(6.8, startTime);
+            f2.frequency.setValueAtTime(voice.f2[0], startTime);
+            f2.frequency.exponentialRampToValueAtTime(
+              voice.f2[1],
+              peakTime * 0.92 + startTime * 0.08
+            );
+            f2.frequency.exponentialRampToValueAtTime(voice.f2[2], endTime);
+            const f2Gain = ctx.createGain();
+            f2Gain.gain.setValueAtTime(1.15, startTime);
+
+            const f3 = ctx.createBiquadFilter();
+            f3.type = 'bandpass';
+            f3.Q.setValueAtTime(8.5, startTime);
+            f3.frequency.setValueAtTime(voice.f3, startTime);
+            const f3Gain = ctx.createGain();
+            f3Gain.gain.setValueAtTime(voice.nasality * 1.2, startTime);
+
+            mouthFilter.connect(f1);
+            mouthFilter.connect(f2);
+            mouthFilter.connect(f3);
+            f1.connect(f1Gain);
+            f2.connect(f2Gain);
+            f3.connect(f3Gain);
+            f1Gain.connect(formantSum);
+            f2Gain.connect(formantSum);
+            f3Gain.connect(formantSum);
+
+            if (this.noiseBuffer && voice.breathiness > 0) {
+              const noiseSource = ctx.createBufferSource();
+              noiseSource.buffer = this.noiseBuffer;
+
+              const breathFilter = ctx.createBiquadFilter();
+              breathFilter.type = 'bandpass';
+              breathFilter.frequency.setValueAtTime(2400, startTime);
+              breathFilter.Q.setValueAtTime(1.8, startTime);
+
+              const breathGain = ctx.createGain();
+              breathGain.gain.setValueAtTime(voice.breathiness, startTime);
+
+              noiseSource.connect(breathFilter);
+              breathFilter.connect(breathGain);
+              breathGain.connect(formantSum);
+              noiseSource.start(startTime);
+              noiseSource.stop(endTime + 0.05);
+            }
+
+            const env = ctx.createGain();
+            const attack = Math.min(0.055, dur * 0.16);
+            const peakAmp = 0.72 * level;
+
+            env.gain.setValueAtTime(0.0001, startTime);
+            env.gain.linearRampToValueAtTime(peakAmp * 0.65, startTime + attack);
+            env.gain.linearRampToValueAtTime(peakAmp, peakTime);
+            env.gain.linearRampToValueAtTime(peakAmp * 0.78, holdTime);
+            env.gain.exponentialRampToValueAtTime(0.0001, endTime);
+
+            formantSum.connect(env);
+            env.connect(this.compressor);
+
+            oscMain.start(startTime);
+            oscDetune.start(startTime);
+            oscSub.start(startTime);
+            vibOsc.start(startTime);
+
+            const stopAt = endTime + 0.05;
+            oscMain.stop(stopAt);
+            oscDetune.stop(stopAt);
+            oscSub.stop(stopAt);
+            vibOsc.stop(stopAt);
+          }
+        }
+
+        const synth = new MeowSynthesizer();
+
+        // Application state
+        const state = {
+          filter: 'all',
+          playingIds: {},
+          playCounts: {},
+          volume: 0.8,
+          muted: false,
+          isChorusActive: false,
+          inspectedCatId: null,
+          lightboxPitch: 1,
+        };
+
+        const activeTimers = {};
+        let chorusTimers = [];
+
+        // DOM references
+        const chorusBtn = document.getElementById('chorus-btn');
+        const chorusIcon = document.getElementById('chorus-icon');
+        const chorusLabel = document.getElementById('chorus-label');
+        const filterGroup = document.getElementById('filter-group');
+        const muteBtn = document.getElementById('mute-btn');
+        const volumeSlider = document.getElementById('master-volume');
+        const catCountLabel = document.getElementById('cat-count-label');
+        const meowCountLabel = document.getElementById('meow-count-label');
+        const catGrid = document.getElementById('cat-grid');
+        const guideList = document.getElementById('guide-list');
+        const resetCountBtn = document.getElementById('reset-count-btn');
+
+        // Lightbox DOM references
+        const lightbox = document.getElementById('lightbox');
+        const lightboxPanel = document.getElementById('lightbox-panel');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const lightboxImgBtn = document.getElementById('lightbox-img-btn');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxFallback = document.getElementById('lightbox-fallback');
+        const lightboxScrimText = document.getElementById('lightbox-scrim-text');
+        const lightboxBars = document.getElementById('lightbox-bars');
+        const lightboxKicker = document.getElementById('lightbox-kicker');
+        const lightboxTitle = document.getElementById('lightbox-title');
+        const lightboxDesc = document.getElementById('lightbox-desc');
+        const lightboxStyle = document.getElementById('lightbox-style');
+        const lightboxPitch = document.getElementById('lightbox-pitch');
+        const lightboxDuration = document.getElementById('lightbox-duration');
+        const lightboxPitchSlider = document.getElementById('lightbox-pitch-slider');
+        const lightboxPitchVal = document.getElementById('lightbox-pitch-val');
+        const lightboxPlayBtn = document.getElementById('lightbox-play-btn');
+        const lightboxPrev = document.getElementById('lightbox-prev');
+        const lightboxNext = document.getElementById('lightbox-next');
+
+        function getFilteredCats() {
+          if (state.filter === 'all') return CATS;
+          return CATS.filter(function (c) {
+            return c.category === state.filter;
+          });
+        }
+
+        function getTotalMeows() {
+          return Object.keys(state.playCounts).reduce(function (sum, key) {
+            return sum + (state.playCounts[key] || 0);
+          }, 0);
+        }
+
+        function getCatById(id) {
+          return CATS.find(function (c) {
+            return c.id === id;
+          }) || null;
+        }
+
+        function updateHeaderControls() {
+          chorusBtn.classList.toggle('is-active', state.isChorusActive);
+          chorusIcon.innerHTML = state.isChorusActive ? ICONS.square : ICONS.play;
+          chorusLabel.textContent = state.isChorusActive ? 'Stop Chorus' : 'Play Chorus';
+
+          const isSilent = state.muted || state.volume === 0;
+          muteBtn.innerHTML = isSilent ? ICONS.volumeX : ICONS.volume;
+          muteBtn.classList.toggle('is-muted', isSilent);
+          muteBtn.setAttribute('aria-label', state.muted ? 'Unmute sound' : 'Mute sound');
+          volumeSlider.value = String(state.muted ? 0 : state.volume);
+
+          const visible = getFilteredCats().length;
+          const total = getTotalMeows();
+          catCountLabel.textContent = visible + (visible === 1 ? ' cat' : ' cats');
+          meowCountLabel.textContent = total + (total === 1 ? ' meow played' : ' meows played');
+          resetCountBtn.hidden = total === 0;
+        }
+
+        function updatePlayingVisuals() {
+          // Update gallery cards in place without rebuilding DOM
+          const cards = catGrid.querySelectorAll('.cat-card');
+          cards.forEach(function (card) {
+            const id = card.getAttribute('data-cat-id');
+            const cat = getCatById(id);
+            if (!cat) return;
+
+            const isPlaying = Boolean(state.playingIds[id]);
+            card.classList.toggle('is-playing', isPlaying);
+
+            const scrimLeft = card.querySelector('.scrim-left');
+            if (scrimLeft) {
+              if (isPlaying) {
+                scrimLeft.innerHTML =
+                  '<span class="sound-bars" aria-hidden="true">' +
+                  '<span class="sound-bar" style="animation-delay:0ms"></span>' +
+                  '<span class="sound-bar" style="animation-delay:110ms"></span>' +
+                  '<span class="sound-bar" style="animation-delay:210ms"></span>' +
+                  '<span class="sound-bar" style="animation-delay:70ms"></span>' +
+                  '</span>' +
+                  '<span class="scrim-callout"></span>';
+                scrimLeft.querySelector('.scrim-callout').textContent = '“' + cat.callout + '”';
+              } else {
+                scrimLeft.innerHTML = ICONS.volume + '<span class="scrim-hint">Click to hear meow</span>';
+              }
+            }
+
+            const countEl = card.querySelector('.cat-count');
+            const count = state.playCounts[id] || 0;
+            if (countEl) {
+              countEl.textContent = count > 0 ? count + '×' : '';
+              countEl.hidden = count === 0;
+            }
+          });
+
+          // Update vocal guide buttons
+          const guideBtns = guideList.querySelectorAll('.guide-play-btn');
+          guideBtns.forEach(function (btn) {
+            const id = btn.getAttribute('data-cat-id');
+            const cat = getCatById(id);
+            if (!cat) return;
+            const isPlaying = Boolean(state.playingIds[id]);
+            btn.classList.toggle('is-playing', isPlaying);
+            btn.querySelector('.guide-btn-label').textContent = isPlaying ? cat.callout : 'Play Meow';
+          });
+
+          // Update lightbox playing visuals
+          if (state.inspectedCatId) {
+            const activeCat = getCatById(state.inspectedCatId);
+            const isPlaying = Boolean(state.playingIds[state.inspectedCatId]);
+            lightboxPanel.classList.toggle('is-playing', isPlaying);
+            lightboxBars.hidden = !isPlaying;
+            if (activeCat) {
+              lightboxScrimText.textContent = isPlaying
+                ? '“' + activeCat.callout + '”'
+                : 'Click portrait to hear meow';
+            }
+          }
+
+          updateHeaderControls();
+        }
+
+        function triggerMeow(cat, pitchScale) {
+          const durationMs = synth.play(cat.voice, pitchScale);
+          state.playingIds[cat.id] = true;
+          state.playCounts[cat.id] = (state.playCounts[cat.id] || 0) + 1;
+          updatePlayingVisuals();
+
+          if (activeTimers[cat.id]) {
+            window.clearTimeout(activeTimers[cat.id]);
+          }
+
+          activeTimers[cat.id] = window.setTimeout(function () {
+            delete state.playingIds[cat.id];
+            delete activeTimers[cat.id];
+            updatePlayingVisuals();
+          }, Math.max(durationMs, 420));
+        }
+
+        function stopChorus() {
+          chorusTimers.forEach(function (id) {
+            window.clearTimeout(id);
+          });
+          chorusTimers = [];
+          state.isChorusActive = false;
+          updateHeaderControls();
+        }
+
+        function toggleChorus() {
+          if (state.isChorusActive) {
+            stopChorus();
+            return;
+          }
+
+          const roster = getFilteredCats();
+          const list = roster.length > 0 ? roster : CATS;
+          state.isChorusActive = true;
+          updateHeaderControls();
+
+          let offsetMs = 0;
+          list.forEach(function (cat, idx) {
+            const tid = window.setTimeout(function () {
+              triggerMeow(cat, 1);
+              if (idx === list.length - 1) {
+                const endTid = window.setTimeout(function () {
+                  state.isChorusActive = false;
+                  updateHeaderControls();
+                }, Math.round(cat.voice.duration * 1000) + 250);
+                chorusTimers.push(endTid);
+              }
+            }, offsetMs);
+            chorusTimers.push(tid);
+            offsetMs += Math.round(cat.voice.duration * 680) + 180;
+          });
+        }
+
+        function renderFilters() {
+          filterGroup.innerHTML = '';
+          FILTERS.forEach(function (filter) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'filter-btn' + (state.filter === filter.id ? ' is-active' : '');
+            btn.setAttribute('aria-pressed', String(state.filter === filter.id));
+            btn.textContent = filter.label;
+            btn.addEventListener('click', function () {
+              state.filter = filter.id;
+              renderFilters();
+              renderGallery();
+              updateHeaderControls();
+            });
+            filterGroup.appendChild(btn);
+          });
+        }
+
+        function renderGallery() {
+          catGrid.innerHTML = '';
+          const cats = getFilteredCats();
+
+          cats.forEach(function (cat) {
+            const article = document.createElement('article');
+            article.className = 'cat-card' + (state.playingIds[cat.id] ? ' is-playing' : '');
+            article.setAttribute('data-cat-id', cat.id);
+
+            const mediaWrap = document.createElement('div');
+            mediaWrap.className = 'cat-media-wrap';
+
+            const portraitBtn = document.createElement('button');
+            portraitBtn.type = 'button';
+            portraitBtn.className = 'cat-portrait-btn';
+            portraitBtn.setAttribute(
+              'aria-label',
+              'Play ' + cat.name + "'s meow (" + cat.vocalStyle + ')'
+            );
+            portraitBtn.addEventListener('click', function () {
+              triggerMeow(cat, 1);
+            });
+
+            const img = document.createElement('img');
+            img.className = 'cat-portrait-img';
+            img.src = cat.imageUrl;
+            img.alt = cat.imageAlt;
+            img.referrerPolicy = 'no-referrer';
+
+            const fallback = document.createElement('div');
+            fallback.className = 'cat-fallback';
+            fallback.style.background = cat.fallbackBg;
+            if (cat.fallbackDark) {
+              fallback.style.color = '#f4f4f5';
+            }
+            fallback.innerHTML = ICONS.cat + '<span class="cat-fallback-name"></span>';
+            fallback.querySelector('.cat-fallback-name').textContent = cat.name;
+
+            img.addEventListener('error', function () {
+              img.style.display = 'none';
+              fallback.classList.add('is-visible');
+            });
+
+            const scrim = document.createElement('div');
+            scrim.className = 'portrait-scrim';
+            const scrimLeft = document.createElement('div');
+            scrimLeft.className = 'scrim-left';
+            scrimLeft.innerHTML = ICONS.volume + '<span class="scrim-hint">Click to hear meow</span>';
+            const scrimDur = document.createElement('span');
+            scrimDur.className = 'scrim-duration';
+            scrimDur.textContent = cat.durationLabel;
+            scrim.appendChild(scrimLeft);
+            scrim.appendChild(scrimDur);
+
+            portraitBtn.appendChild(img);
+            portraitBtn.appendChild(fallback);
+            portraitBtn.appendChild(scrim);
+
+            const inspectBtn = document.createElement('button');
+            inspectBtn.type = 'button';
+            inspectBtn.className = 'inspect-btn';
+            inspectBtn.setAttribute('aria-label', 'Inspect ' + cat.name + "'s portrait");
+            inspectBtn.title = 'Inspect portrait';
+            inspectBtn.innerHTML = ICONS.maximize;
+            inspectBtn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              openLightbox(cat.id);
+            });
+
+            mediaWrap.appendChild(portraitBtn);
+            mediaWrap.appendChild(inspectBtn);
+
+            // Unboxed metadata below portrait
+            const meta = document.createElement('div');
+            meta.className = 'cat-meta';
+
+            const metaLeft = document.createElement('div');
+            metaLeft.className = 'cat-meta-left';
+
+            const titleRow = document.createElement('div');
+            titleRow.className = 'cat-title-row';
+
+            const h3 = document.createElement('h3');
+            h3.className = 'cat-name';
+            h3.textContent = cat.name;
+
+            const playingLbl = document.createElement('span');
+            playingLbl.className = 'playing-label';
+            playingLbl.textContent = 'Playing';
+
+            titleRow.appendChild(h3);
+            titleRow.appendChild(playingLbl);
+
+            const subline = document.createElement('p');
+            subline.className = 'cat-subline';
+            const breedSpan = document.createElement('span');
+            breedSpan.textContent = cat.breed;
+            const dotSpan = document.createElement('span');
+            dotSpan.className = 'sep-dot';
+            dotSpan.setAttribute('aria-hidden', 'true');
+            dotSpan.textContent = '·';
+            const styleSpan = document.createElement('span');
+            styleSpan.textContent = cat.vocalStyle;
+            subline.appendChild(breedSpan);
+            subline.appendChild(dotSpan);
+            subline.appendChild(styleSpan);
+
+            metaLeft.appendChild(titleRow);
+            metaLeft.appendChild(subline);
+
+            const metaRight = document.createElement('div');
+            metaRight.className = 'cat-meta-right';
+            const keySpan = document.createElement('span');
+            keySpan.textContent = 'Key ' + cat.shortcut;
+            const countSpan = document.createElement('span');
+            countSpan.className = 'cat-count';
+            const count = state.playCounts[cat.id] || 0;
+            countSpan.textContent = count > 0 ? count + '×' : '';
+            countSpan.hidden = count === 0;
+            metaRight.appendChild(keySpan);
+            metaRight.appendChild(countSpan);
+
+            meta.appendChild(metaLeft);
+            meta.appendChild(metaRight);
+
+            article.appendChild(mediaWrap);
+            article.appendChild(meta);
+            catGrid.appendChild(article);
+          });
+
+          updatePlayingVisuals();
+        }
+
+        function renderVocalGuide() {
+          guideList.innerHTML = '';
+          CATS.forEach(function (cat) {
+            const row = document.createElement('div');
+            row.className = 'guide-row';
+
+            const nameCol = document.createElement('div');
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'guide-name';
+            nameSpan.textContent = cat.name;
+            const breedSpan = document.createElement('span');
+            breedSpan.className = 'guide-breed';
+            breedSpan.textContent = cat.breed;
+            nameCol.appendChild(nameSpan);
+            nameCol.appendChild(breedSpan);
+
+            const descCol = document.createElement('p');
+            descCol.className = 'guide-desc';
+            descCol.textContent = cat.description;
+
+            const pitchCol = document.createElement('div');
+            pitchCol.className = 'guide-pitch';
+            pitchCol.textContent = cat.pitchLabel;
+
+            const actionCol = document.createElement('div');
+            actionCol.className = 'guide-action';
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'guide-play-btn';
+            btn.setAttribute('data-cat-id', cat.id);
+            btn.innerHTML = ICONS.volume + '<span class="guide-btn-label">Play Meow</span>';
+            btn.addEventListener('click', function () {
+              triggerMeow(cat, 1);
+            });
+
+            actionCol.appendChild(btn);
+
+            row.appendChild(nameCol);
+            row.appendChild(descCol);
+            row.appendChild(pitchCol);
+            row.appendChild(actionCol);
+            guideList.appendChild(row);
+          });
+        }
+
+        function openLightbox(catId) {
+          const cat = getCatById(catId);
+          if (!cat) return;
+
+          state.inspectedCatId = cat.id;
+          state.lightboxPitch = 1;
+          lightboxPitchSlider.value = '1';
+          lightboxPitchVal.textContent = 'Natural (1.00×)';
+
+          lightboxImg.style.display = 'block';
+          lightboxFallback.classList.remove('is-visible');
+          lightboxFallback.style.background = cat.fallbackBg;
+          lightboxFallback.style.color = cat.fallbackDark ? '#f4f4f5' : '#3f3f46';
+          lightboxFallback.innerHTML = ICONS.cat + '<span class="cat-fallback-name"></span>';
+          lightboxFallback.querySelector('.cat-fallback-name').textContent = cat.name;
+
+          lightboxImg.src = cat.imageUrl;
+          lightboxImg.alt = cat.imageAlt;
+          lightboxImgBtn.setAttribute('aria-label', 'Play ' + cat.name + "'s meow");
+
+          lightboxKicker.textContent = 'Portrait ' + cat.shortcut + ' of ' + CATS.length + ' · ' + cat.breed;
+          lightboxTitle.textContent = cat.name;
+          lightboxDesc.textContent = cat.description;
+          lightboxStyle.textContent = cat.vocalStyle;
+          lightboxPitch.textContent = cat.pitchLabel;
+          lightboxDuration.textContent = cat.durationLabel;
+
+          lightboxPlayBtn.innerHTML = ICONS.volume + '<span></span>';
+          lightboxPlayBtn.querySelector('span').textContent = 'Play ' + cat.name + '’s Meow';
+
+          lightbox.hidden = false;
+          updatePlayingVisuals();
+          lightboxClose.focus();
+        }
+
+        function closeLightbox() {
+          state.inspectedCatId = null;
+          lightbox.hidden = true;
+        }
+
+        function navigateLightbox(dir) {
+          if (!state.inspectedCatId) return;
+          const idx = CATS.findIndex(function (c) {
+            return c.id === state.inspectedCatId;
+          });
+          if (idx === -1) return;
+          const nextIdx = (idx + dir + CATS.length) % CATS.length;
+          openLightbox(CATS[nextIdx].id);
+        }
+
+        // Wire static controls
+        lightboxClose.innerHTML = ICONS.close;
+        lightboxPrev.innerHTML = ICONS.chevronLeft + '<span>Previous</span>';
+        lightboxNext.innerHTML = '<span>Next</span>' + ICONS.chevronRight;
+
+        lightboxImg.addEventListener('error', function () {
+          lightboxImg.style.display = 'none';
+          lightboxFallback.classList.add('is-visible');
+        });
+
+        chorusBtn.addEventListener('click', toggleChorus);
+
+        muteBtn.addEventListener('click', function () {
+          state.muted = !state.muted;
+          synth.setMuted(state.muted);
+          updateHeaderControls();
+        });
+
+        volumeSlider.addEventListener('input', function (e) {
+          const val = parseFloat(e.target.value);
+          state.volume = val;
+          if (val > 0 && state.muted) {
+            state.muted = false;
+            synth.setMuted(false);
+          }
+          synth.setVolume(val);
+          updateHeaderControls();
+        });
+
+        resetCountBtn.addEventListener('click', function () {
+          state.playCounts = {};
+          updatePlayingVisuals();
+        });
+
+        lightbox.addEventListener('click', function (e) {
+          if (e.target === lightbox) {
+            closeLightbox();
+          }
+        });
+
+        lightboxClose.addEventListener('click', closeLightbox);
+
+        lightboxImgBtn.addEventListener('click', function () {
+          const cat = getCatById(state.inspectedCatId);
+          if (cat) triggerMeow(cat, state.lightboxPitch);
+        });
+
+        lightboxPlayBtn.addEventListener('click', function () {
+          const cat = getCatById(state.inspectedCatId);
+          if (cat) triggerMeow(cat, state.lightboxPitch);
+        });
+
+        lightboxPitchSlider.addEventListener('input', function (e) {
+          const val = parseFloat(e.target.value);
+          state.lightboxPitch = val;
+          lightboxPitchVal.textContent =
+            val === 1 ? 'Natural (1.00×)' : val.toFixed(2) + '×';
+        });
+
+        lightboxPrev.addEventListener('click', function () {
+          navigateLightbox(-1);
+        });
+
+        lightboxNext.addEventListener('click', function () {
+          navigateLightbox(1);
+        });
+
+        // Keyboard shortcuts
+        window.addEventListener('keydown', function (event) {
+          if (state.inspectedCatId) {
+            if (event.key === 'Escape') {
+              closeLightbox();
+              return;
+            }
+            if (event.key === 'ArrowLeft') {
+              navigateLightbox(-1);
+              return;
+            }
+            if (event.key === 'ArrowRight') {
+              navigateLightbox(1);
+              return;
+            }
+          }
+
+          const target = event.target;
+          if (
+            target &&
+            (target.tagName === 'INPUT' ||
+              target.tagName === 'TEXTAREA' ||
+              target.tagName === 'SELECT')
+          ) {
+            return;
+          }
+
+          if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+          const matched = CATS.find(function (c) {
+            return c.shortcut === event.key;
+          });
+          if (matched) {
+            event.preventDefault();
+            triggerMeow(matched, 1);
+            return;
+          }
+
+          if (
+            event.code === 'Space' &&
+            !state.inspectedCatId &&
+            (!target || target.tagName !== 'BUTTON')
+          ) {
+            event.preventDefault();
+            toggleChorus();
+          }
+        });
+
+        // Initial render
+        renderFilters();
+        renderGallery();
+        renderVocalGuide();
+        updateHeaderControls();
+      })();
+    </script>
   </body>
 </html>
